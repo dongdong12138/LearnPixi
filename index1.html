@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PIXI学习</title>
+    <script src="./pixi.js"></script>
+</head>
+
+<body>
+
+    <script type="text/javascript">
+
+        // 使用别名
+        let Application = PIXI.Application,
+            Container = PIXI.Container,
+            loader = PIXI.loader,
+            resources = PIXI.loader.resources,
+            TextureCache = PIXI.utils.TextureCache,
+            Sprite = PIXI.Sprite,
+            Rectangle = PIXI.Rectangle;
+
+        let app = new Application({
+            width: 512,
+            height: 512,
+            antialias: true,
+            transparent: false,
+            resolution: 1
+        });
+
+        document.body.appendChild(app.view);
+
+        loader
+            .add("images/xxx.json")
+            .load(setup);
+
+        function setup() {
+
+            // 创建地牢
+            let dungeonTexture = TextureCache["dungeon.png"];
+            let dungeon = new Sprite(dungeonTexture);
+            app.stage.addChild(dungeon);
+
+            // 创建探险家
+            let explorer = new Sprite(resources["images/xxx.json"].textures["explorer.png"]);
+            explorer.x = 68;
+            explorer.y = app.stage.height / 2 - explorer.height / 2;        // 让 explorer 在画布中垂直居中
+            app.stage.addChild(explorer);
+
+            // 创建宝藏
+            let id = PIXI.loader.resources["images/xxx.json"].textures;
+            let treasure = new Sprite(id["treasure.png"]);
+            treasure.x = app.stage.width - treasure.width - 48;
+            treasure.y = app.stage.height / 2 - treasure.height / 2;        // 让 treasure 在画布中垂直居中
+            app.stage.addChild(treasure);
+
+            // 创建门
+            let door = new Sprite(id["door.png"]);
+            door.position.set(32, 0);
+            app.stage.addChild(door);
+
+            // 创建泡泡怪
+            let numberOfBlobs = 6,
+                spacing = 48,
+                xOffset = 150;
+
+            for (let i = 0; i < numberOfBlobs; i++) {
+                let blob = new Sprite(id["blob.png"]);
+
+                let x = spacing * i + xOffset;
+                let y = randomInt(0, app.stage.height - blob.height);
+                blob.x = x;
+                blob.y = y;
+
+                app.stage.addChild(blob);
+            }
+
+        }
+
+        /**
+         * 生成 min 到 max 的随机整数
+         * @param {Number} min  最小值
+         * @param {Number} max  最大值
+         * @returns {Number} 随机整数
+        */
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+    </script>
+</body>
+
+</html>
